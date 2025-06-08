@@ -125,5 +125,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Paystack Credentials
 
-PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY')
+PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_TEST_SECRET_KEY')
 PAYSTACK_BASE_URL = os.getenv('PAYSTACK_BASE_URL')
