@@ -46,7 +46,7 @@ This service is designed for small businesses to easily accept payments with a m
 
     ```bash
     git clone https://github.com/jaywes222/mastercraft_payment_gateway.git
-    cd mastercraft_payment_gateway
+    cd payment_gateway
     ```
 
 2. **Create and activate a virtual environment**
