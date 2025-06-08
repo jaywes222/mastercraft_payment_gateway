@@ -11,38 +11,41 @@ class InitiatePaymentView(APIView):
     def post(self, request):
         serializer = PaymentSerializer(data=request.data)
         
-        if serializer.is_valid():
-            data = serializer.validated_data
-            paystack_response = PaystackAPI.initiate_payment(
-                email=data['customer_email'],
-                amount=data['amount'],
-                name=data['customer_name']
-            )
-            if paystack_response['status']:
-                ref = paystack_response['data']['reference']
-                Payment.objects.create(
-                    reference=ref,
-                    amount=data['amount'],
-                    customer_email=data['customer_email'],
-                    customer_name=data['customer_name'],
-                    status='pending'
-                )
-                return Response({
-                    'status': status.HTTP_200_OK,
-                    'message': 'Payment initiated successfully',
-                    'data': paystack_response['data']
-                })
-            else:
-                return Response({
-                    'status': status.HTTP_400_BAD_REQUEST,
-                    'message': 'Payment initiation failed',
-                    'data': paystack_response['message']
-                })
+        if not serializer.is_valid():
+            return Response({
+                'status': False,
+                'message': 'Invalid data',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        paystack_response = PaystackAPI.initiate_payment(
+            email=data['customer_email'],
+            amount=data['amount'],
+            name=data['customer_name']
+        )
+
+        if paystack_response.get('status') is not True:
+            return Response({
+                'status': False,
+                'message': 'Payment initiation failed',
+                'error': paystack_response.get('message', 'Unknown error')
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        reference = paystack_response['data']['reference']
+        Payment.objects.create(
+            reference=reference,
+            amount=data['amount'],
+            customer_email=data['customer_email'],
+            customer_name=data['customer_name'],
+            status='pending'
+        )
+
         return Response({
-            'status': status.HTTP_400_BAD_REQUEST,
-            'message': 'Invalid data',
-            'errors': serializer.errors
-        })
+            'status': True,
+            'message': 'Payment initiated successfully',
+            'data': paystack_response['data']
+        }, status=status.HTTP_200_OK)
         
 
 class PaymentStatusView(APIView):
@@ -58,7 +61,6 @@ class PaymentStatusView(APIView):
         paystack_response = PaystackAPI.verify_payment(payment.reference)
         if paystack_response.get('status'):
             payment.status = paystack_response['data']['status']
-            payment.status = payment_status
             payment.save()
             
             response_data = {
