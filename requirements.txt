@@ -1,6 +1,0 @@
-Django==5.2.2
-djangorestframework
-python-decouple
-python-dotenv
-requests
-os
