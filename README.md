@@ -3,6 +3,10 @@
 A Django RESTful API service for initiating and verifying payments using Paystack.  
 This service is designed for small businesses to easily accept payments with a modular and scalable architecture.
 
+The API is hosted on Render at https://mastercraft-payment-gateway.onrender.com It has the following two endpoints as per the specification:
+GET /api/v1/payments/{id}
+POST /api/v1/payments/
+
 ---
 
 ## Features
@@ -20,24 +24,14 @@ This service is designed for small businesses to easily accept payments with a m
 - [mastercraft\_payment\_gateway](#mastercraft_payment_gateway)
   - [Features](#features)
   - [Table of Contents](#table-of-contents)
-  - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
   - [Running the Service Locally](#running-the-service-locally)
   - [Understanding the Tests](#understanding-the-tests)
   - [GitHub Actions Workflow (CI/CD)](#github-actions-workflow-cicd)
   - [Project Structure](#project-structure)
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.12+  
-- pip  
-- Virtual environment tool (optional but recommended)  
-- Access to Paystack API keys (test/live)  
-
+  - [🌐 Live Deployment](#-live-deployment)
+  - [API Access with Versioning](#api-access-with-versioning)
+    - [🔹 Base URL](#-base-url)
+    - [⚙️ ALLOWED\_HOSTS Setup](#️-allowed_hosts-setup)
 ---
 
 ## Running the Service Locally
@@ -98,7 +92,7 @@ This service is designed for small businesses to easily accept payments with a m
     Use `curl`, Postman, or any HTTP client to POST to:
 
     ```
-    http://localhost:8000/initiate-payment/
+    http://localhost:8000/api/vi/payments
     ```
 
     with the appropriate JSON payload.
@@ -191,6 +185,66 @@ payment_gateway/
 ├── manage.py
 ├── requirements.txt
 └── README.md
+
+
+---
+
+## 🌐 Live Deployment
+
+The API is deployed and accessible publicly at:
+
+**🔗 [https://mastercraft-payment-gateway.onrender.com](https://mastercraft-payment-gateway.onrender.com)**
+
+---
+
+## API Access with Versioning
+
+All endpoints are prefixed with a version for scalability.  
+**Current version: `v1`**
+
+### 🔹 Base URL
+
+  ```
+    https://mastercraft-payment-gateway.onrender.com/api/v1/
+    ```
+
+
+### 🔹 Example Endpoints
+
+#### Initiate Payment
+
+```http
+POST https://mastercraft-payment-gateway.onrender.com/api/v1/payments
+
+** Request Payload **
+```bash
+{
+  "email": "customer@example.com",
+  "amount": 5000
+}
+```
+
+** Verify Payment **
+```http
+    GET https://mastercraft-payment-gateway.onrender.com/api/v1/payments/{id}
+```
+
+### ⚙️ ALLOWED_HOSTS Setup 
+
+** In settings.py
+```bash
+ALLOWED_HOSTS = [
+    'mastercraft-payment-gateway.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+```
+
+
+
+
+
+
 
 
 
